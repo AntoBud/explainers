@@ -1,0 +1,438 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Theme 36 in Context</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: header, then a player (theme map + caption side by side on wide screens, stacked on narrow), controls, sources. */
+:root {
+  --bg: #f5f7f9;
+  --panel: #ffffff;
+  --fg: #18212c;
+  --muted: #5a6574;
+  --line: #c6ced8;
+  --accent: #2c5a86;
+  --accent-soft: #e3ecf5;
+  --v-permit: #2d7a57;
+  --v-remediate: #9a6400;
+  --v-block: #b0302a;
+  --v-escalate: #6648a0;
+  --v-indet: #5a6574;
+  --sans: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #12171d; --panel: #1a2129; --fg: #e3e8ee; --muted: #98a3b1; --line: #36414d;
+    --accent: #7fb0dc; --accent-soft: #1f3245;
+    --v-permit: #5fbf8f; --v-remediate: #d9a441; --v-block: #e5726b; --v-escalate: #a98ce0; --v-indet: #a7b2c0;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #12171d; --panel: #1a2129; --fg: #e3e8ee; --muted: #98a3b1; --line: #36414d;
+  --accent: #7fb0dc; --accent-soft: #1f3245;
+  --v-permit: #5fbf8f; --v-remediate: #d9a441; --v-block: #e5726b; --v-escalate: #a98ce0; --v-indet: #a7b2c0;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--fg); font-family: var(--sans); font-size: 15px; line-height: 1.55;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 28px 40px;
+}
+.wrap { max-width: 1240px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
+header { display: flex; flex-direction: column; gap: 6px; }
+.eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: .04em; color: var(--muted); text-transform: uppercase; }
+h1 { margin: 0; font-size: clamp(22px, 3vw, 30px); font-weight: 600; line-height: 1.2; text-wrap: balance; }
+.lede { margin: 0; color: var(--muted); max-width: 70ch; }
+
+.player { display: grid; grid-template-columns: minmax(0, 1.9fr) minmax(0, 1fr); gap: 20px; align-items: stretch; }
+@media (max-width: 1000px) { .player { grid-template-columns: minmax(0, 1fr); } }
+.stage-scroll { overflow-x: auto; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; min-width: 0; }
+#stage { display: block; width: 100%; min-width: 680px; height: auto; }
+
+.caption { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 20px 22px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.stepnum { font-family: var(--mono); font-size: 12px; color: var(--accent); letter-spacing: .04em; text-transform: uppercase; }
+.caption h2 { margin: 0; font-size: 20px; font-weight: 600; line-height: 1.25; text-wrap: balance; }
+.caption p { margin: 0; max-width: 62ch; }
+.caption .src { font-size: 13px; color: var(--muted); }
+.caption .grp { margin: 6px 0 0; font-family: var(--mono); font-size: 11.5px; font-weight: 500; letter-spacing: .05em; text-transform: uppercase; color: var(--accent); }
+.caption .contrib { margin: 0; display: grid; grid-template-columns: minmax(0, 1fr); gap: 2px 0; }
+.caption .contrib dt { font-weight: 600; font-size: 14px; margin-top: 6px; }
+.caption .contrib dd { margin: 0; font-size: 14px; color: var(--fg); max-width: 60ch; }
+
+.controls { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.btn { font: 500 14px var(--sans); color: var(--fg); background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 8px 14px; cursor: pointer; }
+.btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+.btn:disabled { opacity: .45; cursor: default; }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--panel); }
+.btn.primary:hover:not(:disabled) { color: var(--panel); filter: brightness(1.08); }
+.btn:focus-visible, .dot:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.dots { display: flex; gap: 6px; }
+.dot { width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--line); background: var(--panel); font: 500 13px var(--mono); color: var(--muted); cursor: pointer; padding: 0; }
+.dot[aria-current="step"] { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
+.spacer { flex: 1; }
+
+.note { color: var(--muted); font-size: 13px; max-width: 90ch; border-top: 1px solid var(--line); padding-top: 14px; display: flex; flex-direction: column; gap: 6px; }
+.note p { margin: 0; }
+.note a { color: var(--accent); }
+
+/* SVG */
+#stage text { font-family: var(--sans); fill: var(--fg); font-size: 13px; }
+#stage .h { font-weight: 600; font-size: 13.5px; }
+#stage .sm { font-size: 11.5px; fill: var(--muted); }
+#stage .mono { font-family: var(--mono); font-size: 12px; }
+#stage .mid { text-anchor: middle; }
+#stage .end { text-anchor: end; }
+#stage .acc { fill: var(--accent); }
+#stage .box { fill: var(--panel); stroke: var(--line); stroke-width: 1.2; }
+#stage .soft { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 1.3; }
+#stage .wire { fill: none; stroke: var(--muted); stroke-width: 1.2; }
+#stage .feed { fill: none; stroke: var(--accent); stroke-width: 1.4; stroke-dasharray: 6 5; }
+#stage .arrowhead { fill: var(--muted); }
+#stage .arrowhead-acc { fill: var(--accent); }
+
+[data-in] { opacity: 0; transition: opacity .5s ease; }
+
+#tok { transition: transform .9s cubic-bezier(.4,.1,.2,1); }
+#tok circle { fill: var(--accent); }
+#tok .ring { fill: none; stroke: var(--accent); stroke-width: 1; opacity: .35; }
+
+.v rect { stroke-width: 1.3; transition: stroke-width .3s ease; }
+.v { transition: opacity .35s ease; }
+#stage .v text { font-family: var(--mono); font-size: 12.5px; text-anchor: middle; }
+#stage .v-permit rect { fill: color-mix(in srgb, var(--v-permit) 13%, var(--panel)); stroke: var(--v-permit); }
+#stage .v-remediate rect { fill: color-mix(in srgb, var(--v-remediate) 13%, var(--panel)); stroke: var(--v-remediate); }
+#stage .v-block rect { fill: color-mix(in srgb, var(--v-block) 13%, var(--panel)); stroke: var(--v-block); }
+#stage .v-escalate rect { fill: color-mix(in srgb, var(--v-escalate) 13%, var(--panel)); stroke: var(--v-escalate); }
+#stage .v-indet rect { fill: color-mix(in srgb, var(--v-indet) 13%, var(--panel)); stroke: var(--v-indet); }
+#stage.lit-permit .vset .v:not(.v-permit), #stage.lit-escalate .vset .v:not(.v-escalate) { opacity: .3; }
+#stage.lit-permit .vset .v-permit rect, #stage.lit-escalate .vset .v-escalate rect { stroke-width: 2.8; }
+
+@media (prefers-reduced-motion: reduce) {
+  [data-in], #tok, .v { transition: none !important; }
+}
+</style>
+<style>html{color-scheme:light dark}body{margin:0}[hidden]{display:none!important}img{max-width:100%}</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">FG-TIDA themes · #36 and the themes around it</div>
+    <h1>Following one action through the theme map</h1>
+    <p class="lede">A worked example from #18: a data centre in a 6G network fails and control-plane agents must act. One action is traced through every theme that #36 names as feeding into it or consuming its verdict.</p>
+  </header>
+
+  <div class="player">
+    <div class="stage-scroll">
+      <svg id="stage" data-step="1" viewBox="0 0 900 600" role="img" aria-labelledby="cap-title">
+        <defs>
+          <marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+            <path d="M0,0 L8,4 L0,8 z" class="arrowhead"/>
+          </marker>
+          <marker id="arr-acc" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+            <path d="M0,0 L8,4 L0,8 z" class="arrowhead-acc"/>
+          </marker>
+        </defs>
+
+        <!-- Step 1: the situation -->
+        <g data-in="1" data-f="1 3 4">
+          <rect class="box" x="30" y="240" width="170" height="74" rx="6"/>
+          <text class="h mid" x="115" y="268">Control-plane agent</text>
+          <text class="sm mid" x="115" y="290">6G network, from #18</text>
+        </g>
+        <g data-in="1" data-out="4" data-f="1">
+          <rect class="box" x="660" y="130" width="220" height="190" rx="6"/>
+          <text class="h" x="676" y="156">DC-2 has failed</text>
+          <text class="sm" x="676" y="175">candidate actions</text>
+          <rect class="soft" x="676" y="188" width="188" height="26" rx="4"/><text class="mono" x="688" y="206">failover</text>
+          <rect class="box" x="676" y="220" width="188" height="26" rx="4"/><text class="mono" x="688" y="238">degrade</text>
+          <rect class="box" x="676" y="252" width="188" height="26" rx="4"/><text class="mono" x="688" y="270">shutdown</text>
+          <rect class="box" x="676" y="284" width="188" height="26" rx="4"/><text class="mono" x="688" y="302">isolate</text>
+        </g>
+
+        <!-- Step 2: decided before the action -->
+        <g data-in="2" data-f="2 3">
+          <rect class="box" x="50" y="44" width="230" height="62" rx="6"/>
+          <text class="h" x="66" y="70">#5 Provenance of authority</text>
+          <text class="sm" x="66" y="90">could and did the grantor confer it?</text>
+        </g>
+        <g data-in="2" data-f="2 3 4 5">
+          <rect class="box" x="335" y="44" width="230" height="62" rx="6"/>
+          <text class="h" x="351" y="70">#18 Collective choice</text>
+          <text class="sm" x="351" y="90">declares the operator per situation</text>
+        </g>
+        <g data-in="2" data-f="2 3">
+          <rect class="box" x="620" y="44" width="230" height="62" rx="6"/>
+          <text class="h" x="636" y="70">#29 Connection decisions</text>
+          <text class="sm" x="636" y="90">should it exist and stay in force?</text>
+        </g>
+        <g data-in="2" data-f="2 3">
+          <rect class="soft" x="335" y="146" width="230" height="40" rx="5"/>
+          <text class="mid" x="450" y="171" style="font-weight:500">pinned, authored reference</text>
+          <path class="wire" d="M165,106 V166 H331" marker-end="url(#arr)"/>
+          <text class="sm" x="176" y="158">authored under</text>
+          <line class="wire" x1="450" y1="106" x2="450" y2="142" marker-end="url(#arr)"/>
+          <text class="sm" x="458" y="129">part of</text>
+        </g>
+
+        <!-- Step 3: the check -->
+        <g data-in="3" data-f="3 4">
+          <line class="wire" x1="450" y1="186" x2="450" y2="236" marker-end="url(#arr)"/>
+          <rect class="soft" x="300" y="240" width="320" height="74" rx="6"/>
+          <text class="h mid" x="460" y="268">#36 Action check (#4 + #6)</text>
+          <text class="sm mid" x="460" y="290">does the grant still bind, for this action, now?</text>
+        </g>
+        <g data-in="3" data-f="3">
+          <path class="wire" d="M640,106 V277 H624" marker-end="url(#arr)"/>
+          <text class="sm end" x="632" y="216">actions are taken inside it</text>
+        </g>
+        <g data-in="3" data-f="3 4 5">
+          <line class="wire" x1="460" y1="314" x2="212" y2="352" marker-end="url(#arr)"/>
+          <line class="wire" x1="460" y1="314" x2="336" y2="352" marker-end="url(#arr)"/>
+          <line class="wire" x1="460" y1="314" x2="460" y2="352" marker-end="url(#arr)"/>
+          <line class="wire" x1="460" y1="314" x2="584" y2="352" marker-end="url(#arr)"/>
+          <line class="wire" x1="460" y1="314" x2="708" y2="352" marker-end="url(#arr)"/>
+          <g class="vset">
+            <g class="v v-permit"><rect x="157" y="356" width="110" height="36" rx="5"/><text x="212" y="379">permit</text></g>
+            <g class="v v-remediate"><rect x="281" y="356" width="110" height="36" rx="5"/><text x="336" y="379">remediate</text></g>
+            <g class="v v-block"><rect x="405" y="356" width="110" height="36" rx="5"/><text x="460" y="379">block</text></g>
+            <g class="v v-escalate"><rect x="529" y="356" width="110" height="36" rx="5"/><text x="584" y="379">escalate</text></g>
+            <g class="v v-indet"><rect x="653" y="356" width="110" height="36" rx="5"/><text x="708" y="379">indeterminate</text></g>
+          </g>
+        </g>
+
+        <!-- Step 4: no winner -->
+        <g data-in="4" data-out="5" data-f="4">
+          <rect class="box" x="660" y="130" width="220" height="190" rx="6"/>
+          <text class="h" x="676" y="156">Condorcet test, run time</text>
+          <text class="sm" x="676" y="175">same preferences, a cycle</text>
+          <rect class="box" x="728" y="200" width="84" height="26" rx="4"/><text class="mono mid" x="770" y="218">failover</text>
+          <rect class="box" x="670" y="282" width="84" height="26" rx="4"/><text class="mono mid" x="712" y="300">shutdown</text>
+          <rect class="box" x="786" y="282" width="84" height="26" rx="4"/><text class="mono mid" x="828" y="300">degrade</text>
+          <line class="wire" x1="756" y1="228" x2="726" y2="278" marker-end="url(#arr)"/>
+          <line class="wire" x1="756" y1="295" x2="782" y2="295" marker-end="url(#arr)"/>
+          <line class="wire" x1="816" y1="278" x2="786" y2="228" marker-end="url(#arr)"/>
+          <text class="sm mid" x="770" y="258">beats</text>
+        </g>
+        <g data-in="4" data-f="4 5">
+          <path class="feed" d="M584,392 V444 H794 V464" marker-end="url(#arr-acc)"/>
+          <path class="feed" d="M708,392 V444"/>
+          <rect class="box" x="714" y="470" width="160" height="64" rx="6"/>
+          <text class="h mid" x="794" y="496">#16 Human oversight</text>
+          <text class="sm mid" x="794" y="516">escalate, indeterminate</text>
+        </g>
+
+        <!-- Step 5: after the action -->
+        <g data-in="5" data-f="5">
+          <line class="wire" x1="212" y1="392" x2="212" y2="422"/>
+          <line class="wire" x1="336" y1="392" x2="336" y2="422"/>
+          <line class="wire" x1="460" y1="392" x2="460" y2="422"/>
+          <line class="wire" x1="584" y1="392" x2="584" y2="422"/>
+          <line class="wire" x1="708" y1="392" x2="708" y2="422"/>
+          <line class="wire" x1="106" y1="422" x2="708" y2="422"/>
+          <line class="wire" x1="106" y1="422" x2="106" y2="466" marker-end="url(#arr)"/>
+          <line class="wire" x1="278" y1="422" x2="278" y2="466" marker-end="url(#arr)"/>
+          <line class="wire" x1="450" y1="422" x2="450" y2="466" marker-end="url(#arr)"/>
+          <line class="wire" x1="622" y1="422" x2="622" y2="466" marker-end="url(#arr)"/>
+
+          <rect class="box" x="26" y="470" width="160" height="64" rx="6"/>
+          <text class="h mid" x="106" y="496">#1 Accountability</text>
+          <text class="sm mid" x="106" y="516">records verdicts</text>
+          <rect class="box" x="198" y="470" width="160" height="64" rx="6"/>
+          <text class="h mid" x="278" y="496">WG1 Attestation</text>
+          <text class="sm mid" x="278" y="516">carries the behavioural claim</text>
+          <rect class="soft" x="370" y="470" width="160" height="64" rx="6"/>
+          <text class="h mid" x="450" y="496">#21 Population reading</text>
+          <text class="sm mid" x="450" y="516">reads verdicts across agents</text>
+          <rect class="box" x="542" y="470" width="160" height="64" rx="6"/>
+          <text class="h mid" x="622" y="496">#13 Ecosystem defense</text>
+          <text class="sm mid" x="622" y="516">verdicts, reassessment signals</text>
+
+          <text class="sm mid" x="622" y="552">possible consumers; routing depends on the use case</text>
+          <path class="feed" d="M450,534 V566 H14 V20 H450 V40" marker-end="url(#arr-acc)"/>
+          <text class="sm acc" x="24" y="588" style="fill:var(--accent)">drift between the declared and the effective operator, fed back to #18</text>
+        </g>
+
+        <!-- The one action -->
+        <g id="tok" style="transform: translate(218px,277px)">
+          <circle class="ring" r="20"/>
+          <circle r="13"/>
+          <text class="sm mid" y="31" style="fill:var(--fg)">fail over</text>
+        </g>
+      </svg>
+    </div>
+
+    <aside class="caption" aria-live="polite">
+      <div class="stepnum" id="cap-num">Step 1 of 5</div>
+      <h2 id="cap-title"></h2>
+      <div id="cap-body"></div>
+    </aside>
+  </div>
+
+  <nav class="controls" aria-label="Walkthrough controls">
+    <button class="btn" id="prev" type="button">Back</button>
+    <div class="dots" id="dots"></div>
+    <button class="btn primary" id="next" type="button">Next</button>
+    <span class="spacer"></span>
+    <button class="btn" id="replay" type="button">Replay step</button>
+  </nav>
+
+  <div class="note">
+    <p>Unofficial explainer, prepared as of 15 October 2026 and not part of any proposal. The relationships are taken from the Related Themes section of <a href="https://github.com/FG-TIDA/themes/issues/36" target="_blank" rel="noopener">themes #36</a> and from the comments on <a href="https://github.com/FG-TIDA/themes/issues/18" target="_blank" rel="noopener">themes #18</a> and #36 on 14 and 15 October. The data-centre example and its preference rankings are the ones presented for #18 on the 14 October call.</p>
+    <p>Corrections are welcome on the issues.</p>
+  </div>
+</div>
+
+<script>
+(function () {
+  var STEPS = [
+    { title: "A data centre fails",
+      body: ["A data centre, DC-2, in a 6G network goes down. Control-plane agents have to choose among failover, degrade, shutdown and isolate.",
+             "This is the worked example presented for #18. Follow one action through it: an agent attempts to fail over to another site."],
+      src: "Example: #18 presentation, 14 October." },
+    { title: "Three decisions that must hold when the action happens",
+      body: ["#5 decides whether the grantor could and did confer authority on the agent. #18 declares which collective-choice operator applies in this situation. #29 decides whether the connection between the agent and the system it acts on should exist and stay in force.",
+             "Each is made before the action, and each must still hold when the action is taken. The operator declaration becomes part of the pinned, authored reference, authored under #5's authority. #36's scope names one consequence for #29: an action attempted through a withdrawn binding is blocked, with the withdrawal recorded as the reason."],
+      src: "Sources: #36 Scope and Related Themes; composition comment on #18, 14 October." },
+    { title: "At the moment of action, #36 checks it",
+      body: ["The agent's identity is verified and its authorization is valid. Neither settles whether this failover, at this moment, conforms to what was declared for the situation. That gap is the mismatch #36 is about.",
+             "When the agent attempts the failover, #36 checks that single action against the reference, asking whether the grant still binds at act time. The action is taken inside the connection #29 decided on. Suppose #18 declared a positional (Borda) rule: in the example failover wins, the action conforms, and the check returns permit.",
+             "A permit means the action conforms to the reference. It does not mean the failover will succeed or be safe."],
+      src: "Sources: #36 Summary and Related Themes; #18 presentation." },
+    { title: "When a run-time test finds a cycle",
+      body: ["Keep Borda as the declared operator, and also run a pairwise (Condorcet) test at run time to catch a decision with no stable winner. On the same preferences the test finds a cycle: failover beats shutdown, shutdown beats degrade, degrade beats failover.",
+             "A detected cycle is an escalation. The attempted failover returns escalate and goes to human oversight in #16. Indeterminate is kept for a different case, where the evidence cannot settle the verdict."],
+      src: "Sources: reply from #18's proposer on #18, and the #36 proposer's corrections on #36, 14 October." },
+    { title: "After the check",
+      body: ["The verdict leaves #36 for whichever themes the use case routes it to. #1 records it. WG1 carries it as a behavioural claim through remote attestation. #16 takes it when it is escalate or indeterminate, as in step 4. #13 can receive it as a source finding, while the producing theme keeps its own verdict semantics and authority.",
+             "#21 reads all five verdicts across a population of agents, not only permits, to estimate drift between the operator #18 declared and the one agents are effectively following. That estimate feeds back to #18."],
+      src: "Sources: #36 Related Themes; comments on #36 from its proposer and from a #13 co-proposer, 14 and 15 October." },
+    { title: "What each theme contributes",
+      body: ["Each theme answers a different question about the same action."],
+      groups: [
+        { h: "Before the action, still holding at it", items: [
+          ["#5 Provenance of authority", "Was authority conferred by someone able to confer it?"],
+          ["#18 Collective choice", "Which operator applies in this situation?"],
+          ["#29 Connection decisions", "Should this connection exist, and is it still in force?"] ] },
+        { h: "At the moment of action", items: [
+          ["#36 Action check (#4 + #6)", "Does the grant still bind for this action, now?"] ] },
+        { h: "After the check, where routed", items: [
+          ["#16 Human oversight", "What happens to escalated and indeterminate verdicts?"],
+          ["#1 Accountability", "What record is kept?"],
+          ["WG1 Remote attestation", "How does the verdict reach a relying party?"],
+          ["#13 Ecosystem defense", "What do findings across many agents show?"],
+          ["#21 Population reading", "Are agents following the declared operator?"] ] }
+      ],
+      src: "Restated from #36 Related Themes and the 14 to 15 October comments on #18 and #36." }
+  ];
+
+  var svg = document.getElementById("stage");
+  var tok = document.getElementById("tok");
+  var capNum = document.getElementById("cap-num");
+  var capTitle = document.getElementById("cap-title");
+  var capBody = document.getElementById("cap-body");
+  var prev = document.getElementById("prev");
+  var next = document.getElementById("next");
+  var dotsEl = document.getElementById("dots");
+  var parts = svg.querySelectorAll("[data-in]");
+  var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var step = 1, timers = [];
+
+  for (var i = 1; i <= STEPS.length; i++) {
+    var d = document.createElement("button");
+    d.type = "button"; d.className = "dot"; d.id = "dot-" + i; d.textContent = i;
+    d.setAttribute("aria-label", "Step " + i + ": " + STEPS[i - 1].title);
+    d.addEventListener("click", (function (n) { return function () { go(n); }; })(i));
+    dotsEl.appendChild(d);
+  }
+
+  function at(ms, fn) { if (reduce) { fn(); return; } timers.push(setTimeout(fn, ms)); }
+  function move(x, y, instant) {
+    if (instant || reduce) {
+      tok.style.transition = "none";
+      tok.style.transform = "translate(" + x + "px," + y + "px)";
+      tok.getBoundingClientRect();
+      tok.style.transition = "";
+    } else {
+      tok.style.transform = "translate(" + x + "px," + y + "px)";
+    }
+  }
+  function showParts(n) {
+    parts.forEach(function (el) {
+      var inN = +el.getAttribute("data-in");
+      var outN = +(el.getAttribute("data-out") || 99);
+      var f = (el.getAttribute("data-f") || String(inN)).split(" ").map(Number);
+      var visible = n >= inN && n < outN;
+      var focused = n === STEPS.length || f.indexOf(n) >= 0;
+      el.style.opacity = visible ? (focused ? 1 : 0.28) : 0;
+    });
+  }
+
+  var TIMELINE = {
+    1: function () { move(218, 277, true); },
+    2: function () { move(218, 277); },
+    3: function () {
+      move(218, 277, true);
+      at(500, function () { move(270, 277); });
+      at(1500, function () { svg.classList.add("lit-permit"); });
+    },
+    4: function () {
+      move(270, 277, true);
+      at(1400, function () { svg.classList.add("lit-escalate"); });
+    },
+    5: function () { move(270, 277); },
+    6: function () { move(270, 277); }
+  };
+
+  function render(n) {
+    timers.forEach(clearTimeout); timers = [];
+    svg.classList.remove("lit-permit", "lit-escalate");
+    svg.setAttribute("data-step", n);
+    showParts(n);
+    var s = STEPS[n - 1];
+    capNum.textContent = "Step " + n + " of " + STEPS.length;
+    capTitle.textContent = s.title;
+    capBody.innerHTML = "";
+    s.body.forEach(function (t) { var p = document.createElement("p"); p.textContent = t; capBody.appendChild(p); });
+    (s.groups || []).forEach(function (g) {
+      var h = document.createElement("h3"); h.className = "grp"; h.textContent = g.h; capBody.appendChild(h);
+      var dl = document.createElement("dl"); dl.className = "contrib";
+      g.items.forEach(function (it) {
+        var dt = document.createElement("dt"); dt.textContent = it[0];
+        var dd = document.createElement("dd"); dd.textContent = it[1];
+        dl.appendChild(dt); dl.appendChild(dd);
+      });
+      capBody.appendChild(dl);
+    });
+    var src = document.createElement("p"); src.className = "src"; src.textContent = s.src; capBody.appendChild(src);
+    for (var i = 1; i <= STEPS.length; i++) {
+      var d = document.getElementById("dot-" + i);
+      if (i === n) d.setAttribute("aria-current", "step"); else d.removeAttribute("aria-current");
+    }
+    prev.disabled = n === 1;
+    next.disabled = n === STEPS.length;
+    TIMELINE[n]();
+  }
+  function go(n) { step = Math.max(1, Math.min(STEPS.length, n)); render(step); }
+
+  prev.addEventListener("click", function () { go(step - 1); });
+  next.addEventListener("click", function () { go(step + 1); });
+  document.getElementById("replay").addEventListener("click", function () { render(step); });
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "ArrowRight") go(step + 1);
+    if (e.key === "ArrowLeft") go(step - 1);
+  });
+
+  render(1);
+})();
+</script>
+</body>
+</html>
