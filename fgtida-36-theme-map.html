@@ -312,8 +312,8 @@ h1 { margin: 0; font-size: clamp(22px, 3vw, 30px); font-weight: 600; line-height
     { title: "When a run-time test finds a cycle",
       body: ["Now suppose the declared policy for this situation keeps Borda as the operator and also includes a pairwise (Condorcet) test run at run time, requiring escalation if the test detects a cycle. On the same preferences it does: failover beats shutdown, shutdown beats degrade, degrade beats failover.",
              "So the attempted failover returns escalate and goes to human oversight in #16. Indeterminate is kept for a different case, where the evidence cannot settle the verdict.",
-             "What happens to the attempted action while the escalation is pending is not yet defined in #36. It sits between #36 and #16."],
-      src: "Sources: reply from #18's proposer on #18, and the #36 proposer's corrections on #36, 14 October." },
+             "Escalate grants no permission until it resolves. The attempted failover is held and does not execute, and the carried verdict records it as pending. Who may release it, and how fast, belongs to #16. If nothing resolves it within the window the reference declares, it falls to block. #36's proposer places this in the interface between #36 and #16."],
+      src: "Sources: reply from #18's proposer on #18; the #36 proposer's comments on #36, 14 and 15 October." },
     { title: "After the check",
       body: ["The verdict leaves #36 for whichever themes the use case routes it to. #1 records it. WG1 carries it as a behavioural claim through remote attestation. #16 takes it when it is escalate or indeterminate, as in step 4. #13 can receive it as a source finding, while the producing theme keeps its own verdict semantics and authority.",
              "#21 reads all five verdicts across a population of agents, not only permits, to estimate drift between the operator #18 declared and the one agents are effectively following. That estimate feeds back to #18."],
@@ -328,7 +328,7 @@ h1 { margin: 0; font-size: clamp(22px, 3vw, 30px); font-weight: 600; line-height
         { h: "At the moment of action", items: [
           ["#36 Action check (#4 + #6)", "Does this attempted action conform to the reference, now?"] ] },
         { h: "After the check, where routed", items: [
-          ["#16 Human oversight", "What happens to escalated and indeterminate verdicts?"],
+          ["#16 Human oversight", "Who may release a held action, and how fast?"],
           ["#1 Accountability", "What record is kept?"],
           ["WG1 Remote attestation", "How does the verdict reach a relying party?"],
           ["#13 Ecosystem defense", "What do findings across many agents show?"],
