@@ -188,7 +188,7 @@ h1 { margin: 0; font-size: clamp(22px, 3vw, 30px); font-weight: 600; line-height
           <line class="wire" x1="450" y1="186" x2="450" y2="236" marker-end="url(#arr)"/>
           <rect class="soft" x="300" y="240" width="320" height="74" rx="6"/>
           <text class="h mid" x="460" y="268">#36 Action check (#4 + #6)</text>
-          <text class="sm mid" x="460" y="290">does the grant still bind, for this action, now?</text>
+          <text class="sm mid" x="460" y="290">does this attempted action conform to the reference, now?</text>
         </g>
         <g data-in="3" data-f="3">
           <path class="wire" d="M640,106 V277 H624" marker-end="url(#arr)"/>
@@ -300,16 +300,19 @@ h1 { margin: 0; font-size: clamp(22px, 3vw, 30px); font-weight: 600; line-height
       src: "Example: #18 presentation, 14 October." },
     { title: "Three decisions that must hold when the action happens",
       body: ["#5 decides whether the grantor could and did confer authority on the agent. #18 declares which collective-choice operator applies in this situation. #29 decides whether the connection between the agent and the system it acts on should exist and stay in force.",
-             "Each is made before the action, and each must still hold when the action is taken. The operator declaration becomes part of the pinned, authored reference, authored under #5's authority. #36's scope names one consequence for #29: an action attempted through a withdrawn binding is blocked, with the withdrawal recorded as the reason."],
+             "Each is made before the action, and each must still hold when the action is taken. The operator declaration becomes part of the pinned, authored reference, authored under #5's authority.",
+             "#36's scope names one consequence for #29: an action attempted through a withdrawn binding is blocked, with the withdrawal recorded as the reason."],
       src: "Sources: #36 Scope and Related Themes; composition comment on #18, 14 October." },
     { title: "At the moment of action, #36 checks it",
       body: ["The agent's identity is verified and its authorization is valid. Neither settles whether this failover, at this moment, conforms to what was declared for the situation. That gap is the mismatch #36 is about.",
-             "When the agent attempts the failover, #36 checks that single action against the reference, asking whether the grant still binds at act time. The action is taken inside the connection #29 decided on. Suppose #18 declared a positional (Borda) rule: in the example failover wins, the action conforms, and the check returns permit.",
+             "When the agent attempts the failover, #36 checks whether that single action conforms to the reference at that moment. Part of the check is whether the grant from #5 still binds. The action is taken inside the connection #29 decided on.",
+             "Suppose #18 declared a positional (Borda) rule. In the example failover wins, the action conforms, and the check returns permit.",
              "A permit means the action conforms to the reference. It does not mean the failover will succeed or be safe."],
       src: "Sources: #36 Summary and Related Themes; #18 presentation." },
     { title: "When a run-time test finds a cycle",
-      body: ["Keep Borda as the declared operator, and also run a pairwise (Condorcet) test at run time to catch a decision with no stable winner. On the same preferences the test finds a cycle: failover beats shutdown, shutdown beats degrade, degrade beats failover.",
-             "A detected cycle is an escalation. The attempted failover returns escalate and goes to human oversight in #16. Indeterminate is kept for a different case, where the evidence cannot settle the verdict."],
+      body: ["Now suppose the declared policy for this situation keeps Borda as the operator and also includes a pairwise (Condorcet) test run at run time, requiring escalation if the test detects a cycle. On the same preferences it does: failover beats shutdown, shutdown beats degrade, degrade beats failover.",
+             "So the attempted failover returns escalate and goes to human oversight in #16. Indeterminate is kept for a different case, where the evidence cannot settle the verdict.",
+             "What happens to the attempted action while the escalation is pending is not yet defined in #36. It sits between #36 and #16."],
       src: "Sources: reply from #18's proposer on #18, and the #36 proposer's corrections on #36, 14 October." },
     { title: "After the check",
       body: ["The verdict leaves #36 for whichever themes the use case routes it to. #1 records it. WG1 carries it as a behavioural claim through remote attestation. #16 takes it when it is escalate or indeterminate, as in step 4. #13 can receive it as a source finding, while the producing theme keeps its own verdict semantics and authority.",
@@ -323,7 +326,7 @@ h1 { margin: 0; font-size: clamp(22px, 3vw, 30px); font-weight: 600; line-height
           ["#18 Collective choice", "Which operator applies in this situation?"],
           ["#29 Connection decisions", "Should this connection exist, and is it still in force?"] ] },
         { h: "At the moment of action", items: [
-          ["#36 Action check (#4 + #6)", "Does the grant still bind for this action, now?"] ] },
+          ["#36 Action check (#4 + #6)", "Does this attempted action conform to the reference, now?"] ] },
         { h: "After the check, where routed", items: [
           ["#16 Human oversight", "What happens to escalated and indeterminate verdicts?"],
           ["#1 Accountability", "What record is kept?"],
